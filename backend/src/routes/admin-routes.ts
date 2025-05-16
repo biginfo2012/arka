@@ -15,11 +15,15 @@ import { AuthDto } from "../types/auth-dto.js";
 import { IncomingHttpHeaders } from "http";
 import { EPVersions } from "../types/sponsorship-policy-dto.js";
 import { getNetworkConfig } from "../utils/common.js";
-import { Paymaster } from "../paymaster/index.js";
+import { Paymaster } from "paymaster/index.js";
 
 const adminRoutes: FastifyPluginAsync = async (server) => {
-  const paymaster = new Paymaster(server.config.FEE_MARKUP, server.config.MULTI_TOKEN_MARKUP, server.config.EP7_TOKEN_VGL, server.config.EP7_TOKEN_PGL, server.sequelize, 
-    server.config.MTP_VGL_MARKUP, server.config.EP7_PVGL, server.config.MTP_PVGL, server.config.MTP_PPGL, server.config.EP8_PVGL);
+
+  const SUPPORTED_ENTRYPOINTS = {
+    EPV_06: server.config.EPV_06,
+    EPV_07: server.config.EPV_07,
+    EPV_08: server.config.EPV_08
+  }
 
   const prefixSecretId = 'arka_';
 
@@ -31,11 +35,9 @@ const adminRoutes: FastifyPluginAsync = async (server) => {
       client = new SecretsManagerClient();
   }
 
-  const SUPPORTED_ENTRYPOINTS = {
-    EPV_06: server.config.EPV_06,
-    EPV_07: server.config.EPV_07,
-    EPV_08: server.config.EPV_08
-  }
+  const paymaster = new Paymaster(server.config.FEE_MARKUP, server.config.MULTI_TOKEN_MARKUP, server.config.EP7_TOKEN_VGL, server.config.EP7_TOKEN_PGL, server.sequelize, 
+    server.config.MTP_VGL_MARKUP, server.config.EP7_PVGL, server.config.MTP_PVGL, server.config.MTP_PPGL, server.config.EP8_PVGL);
+
 
 
   server.post('/adminLogin', async function (request, reply) {
@@ -360,8 +362,7 @@ const adminRoutes: FastifyPluginAsync = async (server) => {
       let supportedNetworks;
       if (!apiKeyEntity.supportedNetworks || apiKeyEntity.supportedNetworks == '') {
         supportedNetworks = SupportedNetworks;
-      }
-      else {
+      } else {
         const buffer = Buffer.from(apiKeyEntity.supportedNetworks as string, 'base64');
         supportedNetworks = JSON.parse(buffer.toString())
       }
