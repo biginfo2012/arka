@@ -196,7 +196,7 @@ const Dashboard = ({ logInType }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [supportedNetworks]);
 
-	const handleChange = (event, newValue) => {
+	const handleChange = (_event, newValue) => {
 		setValue(newValue);
 	};
 
@@ -223,7 +223,7 @@ const Dashboard = ({ logInType }) => {
 		setWhitelistAddress(e.target.value);
 	};
 
-	const handleChangeChainId = async (event, newValue) => {
+	const handleChangeChainId = async (_event, newValue) => {
 		setIsLoading(true);
 		setPaymasterBalance("0");
 		setChainId(newValue);
@@ -438,14 +438,14 @@ const Dashboard = ({ logInType }) => {
 											<Tab
 												icon={
 													<img
-														src={networks[network].networkImg}
+														src={networks[network]?.networkImg ?? networks['1'].networkImg}
 														width={48}
 														height={48}
 														alt=""
 													/>
 												}
 												iconPosition="start"
-												label={networks[network].label}
+												label={networks[network]?.label ?? "UNKNOWN"}
 												value={network}
 												disabled={!signedIn}
 												{...a11yProps(networks[network]?.label)}
@@ -539,7 +539,7 @@ const Dashboard = ({ logInType }) => {
 															className="ml-2 justify-center items-center align-middle"
 														>
 															<img
-																src={networks[chainId].networkImg}
+																src={networks[chainId].networkImg ?? networks['1'].networkImg}
 																width={24}
 																height={24}
 																alt=""
